@@ -1,0 +1,8 @@
+{
+   "config": {
+      "timeout_display_full": 3600000,
+      "timeout_display_partial": 900000,
+      "powersave_display": false,
+      "powersave_hands": false
+   }
+}

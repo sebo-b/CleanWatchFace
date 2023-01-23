@@ -1,0 +1,35 @@
+[
+    {
+        "id": 0,
+        "type": "container",
+        "direction": 1,
+        "main_alignment": 1,
+        "cross_alignment": 1,
+        "dimension": {
+            "type": "rigid",
+            "width": 240,
+            "height": 240
+        },
+        "placement": {
+            "type": "absolute",
+            "left": 0,
+            "top": 0
+        },
+        "visible": true,
+        "inversion": false
+    },
+    {
+        "id": 1,
+        "parent_id": 0,
+        "type": "image",
+        "image_name": "background",
+        "draw_mode": 1,
+        "placement": {
+            "type": "absolute",
+            "top": 0,
+            "left": 0
+        },
+        "visible": true,
+        "inversion": false
+    }
+]

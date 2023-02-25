@@ -2,9 +2,6 @@
     {
         "id": 0,
         "type": "container",
-        "direction": 1,
-        "main_alignment": 1,
-        "cross_alignment": 1,
         "dimension": {
             "type": "rigid",
             "width": 240,
@@ -16,20 +13,98 @@
             "top": 0
         },
         "visible": true,
-        "inversion": false
+        "inversion": "#whiteFace"
     },
     {
         "id": 1,
         "parent_id": 0,
-        "type": "image",
-        "image_name": "background",
+        "type": "solid",
         "draw_mode": 1,
         "placement": {
             "type": "absolute",
             "top": 0,
             "left": 0
         },
+        "dimension": {
+            "type": "rigid",
+            "width": 240,
+            "height": 240
+        },
+        "color": 0,
         "visible": true,
+        "inversion": false
+    },
+    {
+        "id": 2,
+        "parent_id": 0,
+        "type": "image",
+        "image_name": "indices",
+        "draw_mode": 1,
+        "placement": {
+            "type": "absolute",
+            "top": 0,
+            "left": 0
+        },
+        "visible": "#indicesVis",
+        "inversion": false
+    },
+    {
+        "id": 3,
+        "parent_id": 0,
+        "type": "image",
+        "image_name": "#dayOfWeekImg",
+        "draw_mode": 1,
+        "placement": {
+            "type": "absolute",
+            "top": 102,
+            "left": 25
+        },
+        "visible": true,
+        "inversion": false
+
+    },
+    {
+        "id": 4,
+        "parent_id": 0,
+        "type": "image",
+        "image_name": "#bgDigitDateImg",
+        "draw_mode": 1,
+        "placement": {
+            "type": "absolute",
+            "top": 102,
+            "left": 166
+        },
+        "visible": "#doubleDateVis",
+        "inversion": false
+
+    },
+    {
+        "id": 5,
+        "parent_id": 0,
+        "type": "image",
+        "image_name": "#ltDigitDateImg",
+        "draw_mode": 1,
+        "placement": {
+            "type": "absolute",
+            "top": 102,
+            "left": 184
+        },
+        "visible": "#doubleDateVis",
+        "inversion": false
+
+    },
+    {
+        "id": 6,
+        "parent_id": 0,
+        "type": "image",
+        "image_name": "#ltDigitDateImg",
+        "draw_mode": 1,
+        "placement": {
+            "type": "absolute",
+            "top": 102,
+            "left": 175
+        },
+        "visible": "#singleDateVis",
         "inversion": false
     }
 ]

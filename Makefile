@@ -1,8 +1,6 @@
 
-APP_FILE := CleanWatchFace.wapp
-BUILD_DIR = build/files
-SRC_DIR = src
-ADB_TARGET = /sdcard/$(APP_FILE)
+BUILD_DIR := build
+SRC_DIR := src
 
 -include env.mk
 
@@ -10,16 +8,21 @@ JERRY_SNAPSHOT ?= "jerry-snapshot"
 IMAGE_COMPRESS ?= "image_compress.py"
 PACK ?= "pack.py"
 
-CODE := $(addprefix $(BUILD_DIR)/code/,$(patsubst %.js,%,$(notdir $(wildcard $(SRC_DIR)/code/*.js))))
-ICONS := $(addprefix $(BUILD_DIR)/icons/,$(patsubst %.png,%,$(filter-out preview.png background.png,$(notdir $(wildcard $(SRC_DIR)/icons/*.png)))))
-DISPLAY_NAMES := $(addprefix $(BUILD_DIR)/display_name/,$(notdir $(wildcard $(SRC_DIR)/display_name/*)))
-LAYOUTS := $(addprefix $(BUILD_DIR)/layout/,$(notdir $(wildcard $(SRC_DIR)/layout/*)))
-CONFIG := $(addprefix $(BUILD_DIR)/config/,$(notdir $(wildcard $(SRC_DIR)/config/*)))
-APP_JSON := $(BUILD_DIR)/../app.json
-PREVIEW := $(BUILD_DIR)/icons/!preview.rle
-BACKGROUND := $(BUILD_DIR)/icons/background
+BUILD_FILES_DIR := $(BUILD_DIR)/files
 
-ALL_TARGETS := $(APP_JSON) $(CODE) $(DISPLAY_NAMES) $(BACKGROUND) $(PREVIEW) $(CONFIG) $(ICONS) $(LAYOUTS)
+APP_NAME := $(shell python3 -c 'import json, sys;print(json.load(sys.stdin)["identifier"])' < $(SRC_DIR)/app.json)
+APP_FILE_NAME = $(APP_NAME).wapp
+APP_FILE := $(BUILD_DIR)/$(APP_FILE_NAME)
+ADB_TARGET = /sdcard/$(APP_FILE_NAME)
+
+CODE := $(addprefix $(BUILD_FILES_DIR)/code/,$(patsubst %.js,%,$(notdir $(wildcard $(SRC_DIR)/code/*.js))))
+ICONS := $(addprefix $(BUILD_FILES_DIR)/icons/,$(patsubst %.png,%,$(notdir $(wildcard $(SRC_DIR)/icons/*.png))))
+DISPLAY_NAMES := $(addprefix $(BUILD_FILES_DIR)/display_name/,$(notdir $(wildcard $(SRC_DIR)/display_name/*)))
+LAYOUTS := $(addprefix $(BUILD_FILES_DIR)/layout/,$(notdir $(wildcard $(SRC_DIR)/layout/*)))
+CONFIG := $(addprefix $(BUILD_FILES_DIR)/config/,$(notdir $(wildcard $(SRC_DIR)/config/*)))
+APP_JSON := $(BUILD_DIR)/app.json
+
+ALL_TARGETS := $(APP_JSON) $(CODE) $(DISPLAY_NAMES) $(CONFIG) $(ICONS) $(LAYOUTS)
 
 .PHONY: all clean make_dirs install
 .SECONDEXPANSION:
@@ -27,11 +30,11 @@ ALL_TARGETS := $(APP_JSON) $(CODE) $(DISPLAY_NAMES) $(BACKGROUND) $(PREVIEW) $(C
 all: make_dirs $(APP_FILE)
 
 clean:
-	rm -r build
-	rm $(APP_FILE)
+	-rm -r build
 
 make_dirs:
-	@mkdir -p $(sort $(dir $(ALL_TARGETS)))
+#	@mkdir -p $(sort $(dir $(ALL_TARGETS)))
+	@mkdir -p $(BUILD_FILES_DIR)/config $(BUILD_FILES_DIR)/code $(BUILD_FILES_DIR)/icons $(BUILD_FILES_DIR)/display_name $(BUILD_FILES_DIR)/layout
 
 install: all
 	adb push $(APP_FILE) $(ADB_TARGET)
@@ -43,7 +46,7 @@ install: all
 
 $(APP_FILE): $(ALL_TARGETS)
 	@echo Packing to $@
-	@$(PACK) -i $(BUILD_DIR)/.. -o $@
+	@$(PACK) -i $(BUILD_DIR) -o $@
 
 
 $(CODE): %:$$(addsuffix .js,$(SRC_DIR)/code/$$(notdir %))
@@ -52,20 +55,7 @@ $(CODE): %:$$(addsuffix .js,$(SRC_DIR)/code/$$(notdir %))
 
 $(ICONS): %:$$(addsuffix .png,$(SRC_DIR)/icons/$$(notdir %))
 	@echo "Compressing image $<"
-	@$(IMAGE_COMPRESS) -i $< -o $@ -w 24 -h 24 -f rle
-
-$(PREVIEW): $(wildcard $(SRC_DIR)/icons/preview.png)
-	@if [ -n "$<" ]; then \
-		echo "Creating preview image $@"; \
-		$(IMAGE_COMPRESS) -i $< -o $@ -w 192 -h 192 -f rle; \
-	fi
-
-$(BACKGROUND): $(wildcard $(SRC_DIR)/icons/background.png)
-	@if [ -n "$<" ]; then \
-		echo "Creating background image $@"; \
-		$(IMAGE_COMPRESS) -i $< -o $@ -w 240 -h 240 -f raw; \
-	fi
-
+	@$(IMAGE_COMPRESS) -i $< -o $@
 
 define COPY_FILES
 echo Copying $< to $@
